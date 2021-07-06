@@ -6,7 +6,7 @@ class BookDetailsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = BookDetails
-        fields  = ['id', 'summary']
+        fields = ['id', 'summary']
 
 
 class BookSerializer(serializers.ModelSerializer):
@@ -15,18 +15,30 @@ class BookSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         temp_book_detail = validated_data.pop('rbook')
         new_book= Book.objects.create(**validated_data)
+        # BookDetails.objects.create(new_book=new_book, **temp_book_detail)
+        # return new_book
         for i in temp_book_detail:
             BookDetails.objects.create(**i, book=new_book)
         return new_book
 
     def update(self, instance, validated_data):
-        instance.title=validated_data.get('title', instance.title)
-        instance.author=validated_data.get('author', instance.author)
+        instance.title = validated_data.get('title', instance.title)
+        instance.author = validated_data.get('author', instance.author)
 
-        book_variants = validated_data.pop('rbook')
-        instance.variants.summary = book_variants.get('summary', instance.variants.summary)
+        # sum = rbook.instance.summary
+        # sum_data = validated_data.pop('rbook')
+        # instance.sum_data.summary = validated_data.get('summary', instance.sum_data.summary)
         instance.save()
         return instance
+
+    # def update(self, instance, validated_data):
+    #     instance.title=validated_data.get('title', instance.title)
+    #     instance.author=validated_data.get('author', instance.author)
+    #
+    #     book = validated_data.pop('rbook')
+    #     instance.summary = book.get('summary', instance.book.summary)
+    #     instance.save()
+    #     return instance
 
 
     class Meta:
